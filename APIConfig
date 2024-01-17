@@ -1,0 +1,103 @@
+public class LoanController {
+
+    public class LoanData {
+
+        public String risk_score;
+
+        public Decimal base_loan_amount;
+
+        public Decimal ltv;
+
+        public String credit_score;
+
+        public String dti_bottom;
+
+        public String occupancy_status;
+
+        public String purpose;
+
+        public String loan_program;
+
+        public String investor;
+
+    }
+ 
+    @AuraEnabled(cacheable=true)
+
+    public static List<LoanData> getLoanData() {
+
+        // Make the HTTP callout to the external API
+
+        String apiUrl = 'https://run.mocky.io/v3/caf4a86d-cbfa-4e15-b1ea-b37902ae10ad';
+
+        HttpRequest request = new HttpRequest();
+
+        request.setEndpoint(apiUrl);
+
+        request.setMethod('GET');
+
+        HttpResponse response = new Http().send(request);
+ 
+        // Parse the JSON response
+
+        if (response.getStatusCode() == 200) {
+
+            // Deserialize the JSON response to a List<LoanData>
+
+            List<LoanData> loanDataList = (List<LoanData>) JSON.deserialize(
+
+                response.getBody(), List<LoanData>.class
+
+            );
+ 
+            // Extract only the required columns
+
+            List<LoanData> selectedColumns = new List<LoanData>();
+
+            for (LoanData data : loanDataList) {
+
+                LoanData selectedData = new LoanData();
+
+                selectedData.risk_score = data.risk_score;
+
+                selectedData.base_loan_amount = data.base_loan_amount;
+
+                selectedData.ltv = data.ltv;
+
+                selectedData.credit_score = data.credit_score;
+
+                selectedData.dti_bottom = data.dti_bottom;
+
+                selectedData.occupancy_status = data.occupancy_status;
+
+                selectedData.purpose = data.purpose;
+
+                selectedData.loan_program = data.loan_program;
+
+                selectedData.investor = data.investor;
+ 
+                selectedColumns.add(selectedData);
+
+            }
+ 
+            // Log the selected columns
+
+            for (LoanData selectedData : selectedColumns) {
+
+                System.debug('Selected Data: ' + selectedData);
+
+            }
+ 
+            return selectedColumns;
+
+        } else {
+
+            // Handle the error, log, or return an empty list
+
+            return new List<LoanData>();
+
+        }
+
+    }
+
+}
