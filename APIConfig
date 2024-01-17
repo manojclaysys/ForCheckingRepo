@@ -21,7 +21,7 @@ public class LoanController {
         public String investor;
 
     }
- 
+    //Changed bu @anitheesh
     @AuraEnabled(cacheable=true)
 
     public static List<LoanData> getLoanData() {
